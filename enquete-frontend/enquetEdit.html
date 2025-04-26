@@ -6,6 +6,7 @@
     <title>Enquete</title>
     <link rel="stylesheet" href="index.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body class="background">
 
@@ -14,7 +15,7 @@
     </div>
 
     <div class="d-flex justify-content-center align-items-center">
-      <form action="enquete.html" method="GET" id="formEnquete" class="w-50" style="max-width: 600px;">
+      <form action="indetificacao.html" method="GET" id="formEnquete" class="w-50" style="max-width: 600px;">
 
         <div class="mb-3 ">
           <label for="pergunta" class="form-label">Pergunta da Enquete</label>
@@ -28,7 +29,9 @@
       
         <div class="mb-3" id="opcoesVotacao">
           <label for="opcoesVotacao" class="form-label">Respostas:</label>
-          <input type="text" name="opcoesVotacao" class="form-control opcoesVotacao" required>
+          <div class="mb-4">
+            <input type="text" name="opcoesVotacao" class="form-control" required>
+          </div>
         </div>
       
         <div class="mb-3">

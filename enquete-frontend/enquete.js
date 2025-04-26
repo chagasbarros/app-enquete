@@ -31,6 +31,8 @@ function montarEnquete() {
         input.type =   'checkbox';
         input.name = 'opcoesVotacao';
         input.id = `opcoesVotacao_${index}`;
+        input.classList.add('form-check-input', 'mb-2', 'd-block');
+        input.role = 'switch';
         input.value = resposta;
 
         const label = document.createElement('label');

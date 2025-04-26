@@ -65,9 +65,25 @@
     
 }
 
+
 @media screen and (min-width: 768px) {
     .imagem-ajustada {
         width: 40%;
+    }
+
+    .logo-identificacao {
+        width: 20%;
+    }
+    
+}
+
+@media screen and (min-width: 962px) {
+    .imagem-ajustada {
+        width: 20%;
+    }
+    
+    .logo-identificacao {
+        width: 10%;
     }
     
 }
