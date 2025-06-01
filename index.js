@@ -12,6 +12,13 @@ const port = 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
+//Rota principal
+app.use(express.static(path.join(__dirname, 'public')))
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'))
+})
+
 // Config MySQL
 const db = mysql.createPool({
   host: process.env.DB_HOST,
