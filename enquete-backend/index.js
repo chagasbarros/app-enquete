@@ -32,14 +32,14 @@ async function testarConexao() {
   }
 }
 
-// Rota para salvar enquete - CORRIGIDA com estrutura real do banco
+// Rota para salvar enquete
 app.post('/api/enquetes', async (req, res) => {
-  // CORREÇÃO: usar os nomes corretos que vêm do frontend
+
   const { pergunta, descricao, prazoVotacao, maxVotos, opcoes } = req.body;
 
   console.log('Requisição recebida:', req.body);
 
-  // Validações
+
   if (!pergunta || !maxVotos || !Array.isArray(opcoes) || opcoes.length === 0) {
     return res.status(400).json({ 
       mensagem: 'Dados inválidos',
@@ -64,19 +64,26 @@ app.post('/api/enquetes', async (req, res) => {
 
     // Inserir enquete (usando os nomes corretos das colunas do seu banco)
     const [enqueteResult] = await conn.query(
-      'INSERT INTO enquetes (pergunta, descricao, opcoes, prazo_votacao, max_votos) VALUES (?, ?, ?, ?, ?)',
-      [pergunta, descricao || null, JSON.stringify(opcoes), prazoVotacao || null, maxVotos]
+      'INSERT INTO enquetes (pergunta, descricao, prazo_votacao, max_votos) VALUES (?, ?, ?, ?)',
+      [pergunta, descricao || null, prazoVotacao || null, maxVotos]
     );
 
     const enqueteId = enqueteResult.insertId;
 
     // Inserir opções na tabela separada também (para manter consistência)
-    const opcoesData = opcoes.map((texto) => [texto, enqueteId]);
+   const opcoesData = opcoes.map((texto) => [texto, enqueteId]);
 
-    await conn.query(
-      'INSERT INTO opcoes (texto, enquete_id) VALUES ?',
-      [opcoesData]
-    );
+// Cria os placeholders dinamicamente: "(?, ?), (?, ?), (?, ?)"
+const placeholders = opcoesData.map(() => '(?, ?)').join(', ');
+
+// Achata a matriz para um array plano: ['Sim', 1, 'Não', 1, 'Talvez', 1]
+const flatValues = opcoesData.flat();
+
+await conn.query(
+  `INSERT INTO opcoes (texto, enquete_id) VALUES ${placeholders}`,
+  flatValues
+);
+
 
     await conn.commit();
 
@@ -177,7 +184,7 @@ app.get('/api/enquetes/atual', async (req, res) => {
   try {
     // Buscar a enquete mais recente
     const [enquetes] = await conn.query(`
-      SELECT id, pergunta, descricao, opcoes, prazo_votacao, max_votos 
+      SELECT id, pergunta, descricao, prazo_votacao, max_votos 
       FROM enquetes 
       ORDER BY id DESC 
       LIMIT 1
@@ -189,6 +196,14 @@ app.get('/api/enquetes/atual', async (req, res) => {
 
     const enquete = enquetes[0];
 
+    // Buscar opções da enquete
+    const [opcoes] = await conn.query(
+      'SELECT texto FROM opcoes WHERE enquete_id = ?',
+      [enquete.id]
+    );
+
+    const opcoesTexto = opcoes.map(o => o.texto);
+
     // Montar resposta (pode usar tanto o JSON da coluna opcoes quanto buscar da tabela opcoes)
     const resposta = {
       id: enquete.id,
@@ -196,7 +211,7 @@ app.get('/api/enquetes/atual', async (req, res) => {
       descricao: enquete.descricao,
       prazoVotacao: enquete.prazo_votacao,
       maxVotos: enquete.max_votos,
-      opcoes: JSON.parse(enquete.opcoes || '[]') // Usando o JSON da coluna opcoes
+      opcoes: opcoesTexto
     };
 
     res.json(resposta);
