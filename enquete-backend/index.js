@@ -2,6 +2,8 @@ const express = require('express');
 const mysql = require('mysql2/promise');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+require('dotenv').config();
+
 
 const app = express();
 const port = 3000;
@@ -12,10 +14,11 @@ app.use(bodyParser.json());
 
 // Config MySQL
 const db = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: 'chBD8332',
-  database: 'enquete_db',
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0

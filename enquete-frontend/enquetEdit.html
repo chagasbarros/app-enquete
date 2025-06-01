@@ -15,7 +15,7 @@
     </div>
 
     <div class="d-flex justify-content-center align-items-center">
-      <form action="identificacao.html" method="GET" id="formEnquete" class="w-50" style="max-width: 600px;" onsubmit="return salvarEnquete()">
+      <form id="formEnquete" class="w-50" style="max-width: 600px;">
 
         <div class="mb-3 ">
           <label for="pergunta" class="form-label">Pergunta da Enquete</label>
@@ -38,7 +38,7 @@
           <button type="button" class="btn btn-success" onclick="adicionarResposta()">Adicionar Resposta</button>
         </div>
       
-        <select class="form-select" aria-label="Default select example">
+        <select id="maxVotos" class="form-select" aria-label="Default select example">
           <option selected>Quantas vezes pode votar?</option>
           <option value="1">1</option>
           <option value="2">2</option>
@@ -54,7 +54,7 @@
         </div>
       
         <div class="mb-3">
-          <button type="submit" class="btn btn-success">Criar enquete</button>
+          <button type="submit"  class="btn btn-success">Criar enquete</button>
         </div>
       </form>
     </div>

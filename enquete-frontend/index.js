@@ -85,40 +85,62 @@ function adicionarResposta() {
   divOpcoesVotacao.appendChild(wrapper);
 }
 
-function salvarEnquete() {
+function salvarEnquete(event) {
+  console.log('Função salvarEnquete chamada');
+  event.preventDefault(); // impede envio automático do formulário
+
   const pergunta = document.getElementById('pergunta').value.trim();
   const descricao = document.getElementById('descricao').value.trim();
   const prazo = document.getElementById('prazoVotacao').value;
+  const maxVotos = parseInt(document.getElementById('maxVotos').value);
 
   const opcoes = Array.from(document.querySelectorAll('input[name="opcoesVotacao"]'))
     .map(input => input.value.trim())
     .filter(valor => valor !== '');
 
-  const select = document.querySelector('select');
-  const maxVotos = select.value; // 👈 pega o valor selecionado
-
-  // Validação extra (opcional)
-  if (!pergunta || opcoes.length === 0) {
-    alert('Preencha a pergunta e pelo menos uma opção de resposta.');
-    return false; // Cancela envio
+  if (!pergunta || !maxVotos || opcoes.length === 0) {
+    alert('Preencha todos os campos obrigatórios.');
+    return false;
   }
 
-  // Cria um objeto com os dados
   const enquete = {
     pergunta,
     descricao,
-    prazo,
-    maxVotos, // 👈 inclui o valor do select
+    prazoVotacao: prazo,
+    maxVotos,
     opcoes
   };
 
-  // Salva no localStorage como string JSON
-  localStorage.setItem('dadosEnquete', JSON.stringify(enquete));
+  fetch('http://localhost:3000/api/enquetes', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(enquete)
+  })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error('Erro ao salvar enquete');
+      }
+      return res.json();
+    })
+    .then(data => {
+      console.log('Enquete criada com sucesso:', data);
+      // Redireciona após sucesso
+      window.location.href = 'compartilheLink.html';
+    })
+    .catch(err => {
+      console.error(err);
+      alert('Erro ao salvar enquete.');
+    });
 
-  return true; // Permite o envio para outra página
+  return false; // impede o envio normal do formulário
 }
 
 
 function acompanharEnquete() {
     alert('Sem enquete')
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('formEnquete');
+    form.addEventListener('submit', salvarEnquete);
+});
